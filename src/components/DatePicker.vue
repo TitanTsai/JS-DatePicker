@@ -1,8 +1,8 @@
 <template>
     <div>
-        <input class="dp-input" type="text" v-model="dateValue" @click="openModal=!openModal" placeholder="Due Date" readonly>
-        <div class="dp-container">
-            
+        <input class="dp-input" type="text" v-model="dateValue" @click="showModal=!showModal;" placeholder="Due Date" readonly>
+        
+        <div class="dp-container" v-if="showModal">
             <div class="dp-month-header">
                 <div class="dp-change-month" @click="changeMonth(-1)">&#10094;</div>
                 <div class="dp-month-display">{{this.monthName[this.selected.getMonth()]}}, {{this.selected.getFullYear()}}</div>
@@ -14,7 +14,7 @@
                 <div v-for="(day,index) in calender" class="dp-day" :class="{active:day.isActive}" :key="day" @click="selectDate(index)">{{day.num}}</div>
             </div>
             <div class="dp-footer">
-                <div class="dp-done_button" @click="openModal=false">Done</div>
+                <div class="dp-done_button" @click="showModal=false">Done</div>
             </div>
         </div>
     </div>
@@ -29,8 +29,7 @@ export default {
             selected: new Date(),
             weekName:['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
             monthName:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-            isActive:false,
-            openModal:true,
+            showModal:false,
             calender: [],
             prevWeekDays:[],
         }
@@ -48,7 +47,7 @@ export default {
             this.prevWeekDays.length = firstWeekDay
 
             for(let day=1; day<= daysofMonth; day++){
-                this.calender.push({'num':day,isActive:false})
+                this.calender.push({'num':day,isActive:false,isToday:false})
             }
         },
         changeMonth(value){
@@ -93,7 +92,6 @@ export default {
         margin:1em auto;
         display:block;
         width:20em;
-
         background-color:var(--background);
         border-radius: 0.5em;
         box-shadow: 0 3px 6px rgba(0,0,0,0.16);
@@ -160,9 +158,17 @@ export default {
         background-color:var(--hover);
     }
 
+    .today{
+        border:2px solid var(--primary);
+    }
+
     .active{
         background-color:var(--primary);
         color:var(--white)
+    }
+
+    .active:hover{
+        background-color:var(--primary);
     }
 
     .dp-footer{
@@ -178,6 +184,7 @@ export default {
         font-weight:500;
         border-radius:8px;
         padding:8px 0;
+        cursor: pointer;
     }
 
     @media screen and (max-width:768px) {
