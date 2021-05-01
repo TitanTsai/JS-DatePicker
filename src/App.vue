@@ -27,6 +27,8 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+  
+
 }
 
 :root  {
@@ -36,6 +38,11 @@ export default {
     --white:#f2f2f2;
     --caption:#19191B;
     --disabled:#c2c2c2;
+    --hover:#F2F4F6;
+    user-select:none;
+    -webkit-user-select:none;
+    -ms-user-select: none;
+    -moz-user-select: none;
 }
 
 

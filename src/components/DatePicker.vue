@@ -4,14 +4,14 @@
         <div class="dp-container">
             
             <div class="dp-month-header">
-                <div class="dp-change-month">&#10094;</div>
-                <div class="dp-month-display"></div>
-                <div class="dp-change-month">&#10095;</div>
+                <div class="dp-change-month" @click="changeMonth(-1)">&#10094;</div>
+                <div class="dp-month-display">{{this.monthName[this.selected.getMonth()]}}, {{this.selected.getFullYear()}}</div>
+                <div class="dp-change-month" @click="changeMonth(1)">&#10095;</div>
             </div>
             <div class="dp-weeks-container">
-                <div v-for="name in weekName" :key="name">{{name}}</div>
-                <div v-for="prevday in prevWeekDays" :key="prevday">{{prevday}}</div>
-                <div v-for="day in calender" :key="day">{{day}}</div>
+                <div v-for="name in weekName"  class="dp-weekday" :key="name">{{name}}</div>
+                <div v-for="prevday in prevWeekDays" :key="prevday"></div>
+                <div v-for="(day,index) in calender" class="dp-day" :class="{active:day.isActive}" :key="day" @click="selectDate(index)">{{day.num}}</div>
             </div>
             <div class="dp-footer">
                 <div class="dp-done_button" @click="openModal=false">Done</div>
@@ -26,12 +26,13 @@ export default {
     emits: ['update:modelValue'],
     data(){
         return{
-            current: null,
+            selected: new Date(),
             weekName:['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+            monthName:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
             isActive:false,
             openModal:true,
             calender: [],
-            prevWeekDays:[]
+            prevWeekDays:[],
         }
     },
     created(){
@@ -39,30 +40,39 @@ export default {
     },
     methods:{
         renderCalender(){
-            let selected = new Date();
-            let daysofMonth = new Date(selected.getFullYear(),selected.getMonth() +1,0).getDate();//取得該月份天數,月份0-11
-            let firstWeekDay = new Date(`${selected.getFullYear()}-${selected.getMonth() +1 }-01`).getDay()
-            let prevMonthDay = new Date(selected.getFullYear(), selected.getMonth(),0).getDate()//取得上個月天數
+            let daysofMonth = new Date(this.selected.getFullYear(),this.selected.getMonth() +1,0).getDate();//取得該月份天數,月份0-11
+            let firstWeekDay = new Date(`${this.selected.getFullYear()}-${this.selected.getMonth() +1 }-01`).getDay()
+            // let prevMonthDay = new Date(this.selected.getFullYear(), this.selected.getMonth(),0).getDate()//取得上個月天數
 
-            for(let prev=firstWeekDay;prev>0;prev--){
-                this.prevWeekDays.push(prevMonthDay-prev+1)
-            }
+            this.prevWeekDays.length = firstWeekDay
 
-            for(let i=1; i<= daysofMonth; i++){
-                this.calender.push(i)
+            for(let day=1; day<= daysofMonth; day++){
+                this.calender.push({'num':day,isActive:false})
             }
+        },
+        changeMonth(value){
+            this.selected.setMonth(this.selected.getMonth() + value);
+            this.prevWeekDays=[];
+            this.calender=[];
+            this.renderCalender();
+        },
+        selectDate(value){
+            this.calender.forEach(item=> item.isActive=false)
+            this.calender[value].isActive = true;
+            this.dateValue =new Date(this.selected.setDate(value+1)).toLocaleDateString()
         }
     },
     computed: {
         dateValue: {
-        get() {
-            return this.modelValue
+            get() {
+                return this.modelValue
+            },
+            set(value) {
+                this.$emit('update:modelValue', value)
+            }
         },
-        set(value) {
-            this.$emit('update:modelValue', value)
-        }
-        }
-    }
+    },
+
     }
     
 </script>
@@ -82,7 +92,7 @@ export default {
         margin:1em auto;
         display:block;
         width:20em;
-        height:23em;
+
         background-color:var(--background);
         border-radius: 0.5em;
         box-shadow: 0 3px 6px rgba(0,0,0,0.16);
@@ -109,7 +119,7 @@ export default {
         
     }
 
-    .dp-change-month, .dp-day{
+    .dp-change-month{
         cursor:pointer;
         width:36px;
         height:36px;
@@ -134,34 +144,19 @@ export default {
         text-align:center;
     }
 
-    .dp-weekdays{
-        font-size:18px;
-        color:var(--caption);
-        font-weight: 500;
-    }
-
-    .dp-day{
-        color:var(--caption);
-        font-size:18px;
-        font-weight:500;
-        margin-bottom:3px;
-    }
-
-    .dp-day-disable{
-        color:var(--disabled);
-        font-size:18px;
-        font-weight:300;
-        margin-bottom:3px;
+    .dp-day, .dp-weekday{
         width:36px;
         height:36px;
-        display:flex;
-        align-items: center;
-        justify-content: center;
+        font-size: 18px;
+        font-weight: 500;
+        margin-bottom:6px;
+        border-radius: 8px;
+        justify-self: center;
+        line-height: 36px;
     }
-
+    
     .dp-day:hover{
-        background-color:var(--primary);
-        color:var(--white)
+        background-color:var(--hover);
     }
 
     .active{
@@ -170,25 +165,18 @@ export default {
     }
 
     .dp-footer{
-        bottom:0;
-        left:0;
-        padding:1em 0;
-        width:100%;
+        margin-top:1em;
     }
 
     .dp-done_button{
-        align-self: center;
-        display:inline-flex;
+        display:block;
+        width:100%;
         background-color:var(--primary);
         color:var(--white);
-        padding:8px 16px;
-        position: absolute;
-        bottom:1em;
-        left:50%;
-        transform: translateX(-50%);
-        border-radius: 8px;
+        font-size:18px;
         font-weight:500;
-        cursor: pointer;
+        border-radius:8px;
+        padding:8px 0;
     }
 
     @media screen and (max-width:768px) {
