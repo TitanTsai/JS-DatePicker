@@ -36,7 +36,8 @@ export default {
         }
     },
     created(){
-        this.renderCalender()
+        this.renderCalender(),
+        this.calender[this.selected.getDate()-1].isActive = true
     },
     methods:{
         renderCalender(){
