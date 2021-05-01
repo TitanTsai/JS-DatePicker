@@ -1,23 +1,17 @@
 <template>
     <div>
         <input class="dp-input" type="text" v-model="dateValue" @click="openModal=!openModal" placeholder="Due Date" readonly>
-        <div class="dp-container" v-show="openModal">
+        <div class="dp-container">
             
             <div class="dp-month-header">
-                <div class="dp-change-month" @click="changeMonth(-1)">&#10094;</div>
-                <div class="dp-month-display">{{current.getMonth()+1}}, {{current.getFullYear()}}</div>
-                <div class="dp-change-month" @click="changeMonth(1)">&#10095;</div>
+                <div class="dp-change-month">&#10094;</div>
+                <div class="dp-month-display"></div>
+                <div class="dp-change-month">&#10095;</div>
             </div>
             <div class="dp-weeks-container">
-                <div class="dp-weekdays">Su</div>
-                <div class="dp-weekdays">Mo</div>
-                <div class="dp-weekdays">Tu</div>
-                <div class="dp-weekdays">We</div>
-                <div class="dp-weekdays">Th</div>
-                <div class="dp-weekdays">Fr</div>
-                <div class="dp-weekdays">Sa</div>
-                <div class="dp-day-disable" v-for="prevDay in prevWeekDays" :key="prevDay">{{prevDay}}</div>
-                <div class="dp-day" :class={active:calenderday.isActive} v-for="(calenderday,index) in calender" :key="index" @click="setValue(index);">{{calenderday.day}}</div>
+                <div v-for="name in weekName" :key="name">{{name}}</div>
+                <div v-for="prevday in prevWeekDays" :key="prevday">{{prevday}}</div>
+                <div v-for="day in calender" :key="day">{{day}}</div>
             </div>
             <div class="dp-footer">
                 <div class="dp-done_button" @click="openModal=false">Done</div>
@@ -28,55 +22,36 @@
 
 <script>
 export default {
-    props: {
-            modelValue:{type:String,
-                        default: new Date().toLocaleDateString()}
-                        },
+    props: ['modelValue'],
     emits: ['update:modelValue'],
     data(){
         return{
-            current : new Date(),
-            calender: [],
-            prevWeekDays:[],
+            current: null,
+            weekName:['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
             isActive:false,
             openModal:true,
+            calender: [],
+            prevWeekDays:[]
         }
     },
     created(){
-        this.dateValue = new Date().toLocaleDateString();
-        setTimeout(this.renderCalender(),0);
-        
+        this.renderCalender()
     },
     methods:{
         renderCalender(){
+            let selected = new Date();
+            let daysofMonth = new Date(selected.getFullYear(),selected.getMonth() +1,0).getDate();//取得該月份天數,月份0-11
+            let firstWeekDay = new Date(`${selected.getFullYear()}-${selected.getMonth() +1 }-01`).getDay()
+            let prevMonthDay = new Date(selected.getFullYear(), selected.getMonth(),0).getDate()//取得上個月天數
 
-            const FirstWeekDay = new Date(this.current.getFullYear(), this.current.getMonth(), 1).getDay();
-            const PrevMonthDay = new Date(this.current.getFullYear(), this.current.getMonth(),0).getDate();
-            const MonthDay = new Date(this.current.getFullYear(),this.current.getMonth()+1,0).getDate();
-        
-            for(let prevDays=FirstWeekDay; prevDays>0; prevDays--){
-                this.prevWeekDays.push(PrevMonthDay-prevDays+1)
+            for(let prev=firstWeekDay;prev>0;prev--){
+                this.prevWeekDays.push(prevMonthDay-prev+1)
             }
 
-            for(let x=1; x<=MonthDay; x++){
-                this.calender.push({'day':x,isActive:false})
+            for(let i=1; i<= daysofMonth; i++){
+                this.calender.push(i)
             }
-        },
-        changeMonth(value){
-            this.current.setMonth(this.current.getMonth() + value);
-            this.prevWeekDays=[];
-            this.calender=[];
-            this.renderCalender();
-        },
-        setValue(index){
-            this.calender.forEach(item=> item.isActive = false);
-            this.calender[index].isActive = true;
-            this.dateValue= new Date(this.current.setDate(index+1)).toLocaleDateString();
-        },
-        setToday(){
-            this.dateValue = new Date().toLocaleDateString();
-        },
-        
+        }
     },
     computed: {
         dateValue: {
@@ -173,8 +148,12 @@ export default {
     }
 
     .dp-day-disable{
-        text-align: center;
-        color:inherit;
+        color:var(--disabled);
+        font-size:18px;
+        font-weight:300;
+        margin-bottom:3px;
+        width:36px;
+        height:36px;
         display:flex;
         align-items: center;
         justify-content: center;

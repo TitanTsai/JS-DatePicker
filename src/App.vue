@@ -1,5 +1,4 @@
 <template>
-
   <DatePicker v-model:modelValue="dateValue"/>
 </template>
 
