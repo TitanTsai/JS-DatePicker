@@ -1,5 +1,5 @@
 <template>
-  <DatePicker v-model:modelValue="dateValue"/>
+  <DatePicker v-model:modelValue="dateValue" :instantSelect="true"/>
 </template>
 
 <script>
@@ -8,6 +8,7 @@ import DatePicker from '@/components/DatePicker.vue'
 
 export default {
   name: 'App',
+  props:{instantSelect:Boolean},
   components: {
     DatePicker
   },

@@ -3,7 +3,7 @@
         <input class="dp-input" type="text" v-model="dateValue" @click="showModal=!showModal;" placeholder="Due Date" readonly>
         
         <div class="dp-container" v-if="showModal">
-            <div class="dp-instant-container" v-if="InstantSelect">
+            <div class="dp-instant-container" v-if="instantSelect">
                 <div class="dp-instant-btn" @click="instantDate(-1)">Today</div>
                 <div class="dp-instant-btn" @click="instantDate(0)">Tomorrow</div>
                 <div class="dp-instant-btn" @click="instantDate(1)">+2 Days</div>
@@ -28,7 +28,7 @@
 
 <script>
 export default {
-    props: ['modelValue'],
+    props:{modelValue:String, instantSelect:Boolean},
     emits: ['update:modelValue'],
     data(){
         return{
@@ -36,10 +36,9 @@ export default {
             selected: new Date(),
             weekName:['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
             monthName:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-            showModal:false,
-            InstantSelect:true,
             calender: [],
             prevWeekDays:[],
+            showModal:false,
         }
     },
     created(){
@@ -49,11 +48,9 @@ export default {
     methods:{
         renderCalender(){
             let daysofMonth = new Date(this.selected.getFullYear(),this.selected.getMonth() +1,0).getDate();//取得該月份天數,月份0-11
-            let firstWeekDay = new Date(`${this.selected.getFullYear()}-${this.selected.getMonth() +1 }-01`).getDay()
-            // let prevMonthDay = new Date(this.selected.getFullYear(), this.selected.getMonth(),0).getDate()//取得上個月天數
-
-            this.prevWeekDays.length = firstWeekDay
-
+            let firstWeekDay = new Date(`${this.selected.getFullYear()}-${this.selected.getMonth() +1 }-01`).getDay();//取得第一天的星期日
+            this.prevWeekDays.length = firstWeekDay//開始日之前填入空格
+            //產生該月每一天的陣列
             for(let day=1; day<= daysofMonth; day++){
                 this.calender.push({'num':day,isActive:false,isToday:false})
             }
@@ -70,11 +67,11 @@ export default {
             this.dateValue =new Date(this.selected.setDate(value+1)).toLocaleDateString()
         },
         instantDate(value){
-            this.dateValue=new Date(this.today.getFullYear(),this.today.getMonth(),this.today.getDate()+value).toLocaleDateString();
             this.calender=[];
-            this.selected.setMonth(this.today.getMonth());
+            this.selected= new Date(this.today.getFullYear(),this.today.getMonth(),this.today.getDate()+value);
             this.renderCalender();
-            this.calender[this.today.getDate()+value].isActive=true
+            this.calender[this.today.getDate()+value].isActive=true;
+            this.dateValue=new Date(this.today.getFullYear(),this.today.getMonth(),this.today.getDate()+1+value).toLocaleDateString();
             
         }
     },
