@@ -2,21 +2,21 @@
     <div>
         <input class="dp-input" type="text" v-model="dateValue" @click="showModal=!showModal;" placeholder="Due Date" readonly>
         <div class="dp-container" v-if="showModal">
-            <div class="dp-instant-container" v-if="instantSelect">
-                <div class="dp-instant-btn" @click="instantDate(-1)">Today</div>
-                <div class="dp-instant-btn" @click="instantDate(0)">Tomorrow</div>
-                <div class="dp-instant-btn" @click="instantDate(1)">+2 Days</div>
+            <div class="dp-instant-container" v-if="instantSelector">
+                <div class="dp-instant-btn" @click="instantSelect(0)">Today</div>
+                <div class="dp-instant-btn" @click="instantSelect(1)">Tomorrow</div>
+                <div class="dp-instant-btn" @click="instantSelect(2)">+2 Days</div>
             </div>
 
             <div class="dp-month-header">
                 <div class="dp-change-month" @click="changeMonth(-1)">&#10094;</div>
-                <div class="dp-month-display">{{this.monthName[this.selected.getMonth()]}}, {{this.selected.getFullYear()}}</div>
+                <div class="dp-month-display">{{monthName[selected.getMonth()]}}  {{selected.getFullYear()}}</div>
                 <div class="dp-change-month" @click="changeMonth(1)">&#10095;</div>
             </div>
             <div class="dp-weeks-container">
-                <div v-for="name in weekName"  class="dp-weekday" :key="name">{{name}}</div>
-                <div v-for="prevday in prevWeekDays" :key="prevday"></div>
-                <div v-for="(day,index) in calender" class="dp-day" :class="{active:day.isActive}" :key="day" @click="selectDate(index)">{{day.num}}</div>
+                <div class="dp-weekday"  v-for="name in weekName" :key="name">{{name}}</div>
+                <div v-for="prev in prevDays" :key="prev">{{prev}}</div>
+                <div class="dp-day" :class="{active:day.isActive}" v-for="(day,index) in calender" :key="index" @click="selectDate(index)">{{day.num}}</div>
             </div>
             <div class="dp-footer">
                 <div class="dp-done_button" @click="showModal=false">Done</div>
@@ -27,51 +27,51 @@
 
 <script>
 export default {
-    props:{modelValue:String, instantSelect:Boolean},
+    props:{modelValue:String, instantSelector:Boolean},
     emits: ['update:modelValue'],
     data(){
         return{
             today: new Date(),
-            selected: new Date(),
+            selected: '',
             weekName:['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
             monthName:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
             calender: [],
-            prevWeekDays:[],
+            prevDays:[],
             showModal:false,
         }
     },
     created(){
-        this.renderCalender(),
-        this.calender[this.today.getDate()-1].isActive = true
+        this.selected = this.today
+        this.renderCalender()
     },
     methods:{
         renderCalender(){
-            let daysofMonth = new Date(this.selected.getFullYear(),this.selected.getMonth() +1,0).getDate();//取得該月份天數,月份0-11
-            let firstWeekDay = new Date(`${this.selected.getFullYear()}-${this.selected.getMonth() +1 }-01`).getDay();//取得第一天的星期日
-            this.prevWeekDays.length = firstWeekDay//開始日之前填入空格
-            //產生該月每一天的陣列
-            for(let day=1; day<= daysofMonth; day++){
-                this.calender.push({'num':day,isActive:false,isToday:false})
+            this.prevDays=[];
+            this.calender=[];
+            const firstDay = new Date(this.selected.getFullYear(),this.selected.getMonth(),1).getDay(); //該月份第一天星期幾 0-6
+            const lastDay = new Date(this.selected.getFullYear(),this.selected.getMonth()+1,0).getDate();//該月份總天數
+
+            for(let space = 1;space<=firstDay; space++){
+                this.prevDays.push(null)
+            };
+
+            for(let day = 1; day<=lastDay; day++){
+                this.calender.push({'num':day})
             }
         },
-        changeMonth(value){
-            this.selected.setMonth(this.selected.getMonth() + value);
-            this.prevWeekDays=[];
-            this.calender=[];
-            this.renderCalender();
-        },
         selectDate(value){
-            this.calender.forEach(item=> item.isActive=false)
+            this.calender.forEach(item=>item.isActive=false);
+            this.dateValue = new Date(this.selected.getFullYear(),this.selected.getMonth(),value+1).toLocaleDateString();
             this.calender[value].isActive = true;
-            this.dateValue =new Date(this.selected.setDate(value+1)).toLocaleDateString()
         },
-        instantDate(value){
-            this.calender=[];
-            this.selected= new Date(this.today.getFullYear(),this.today.getMonth(),this.today.getDate()+value);
+        changeMonth(value){
+            this.selected = new Date(this.selected.getFullYear(),this.selected.getMonth()+value);
+            this.renderCalender()
+        },
+        instantSelect(value){
+            this.selected=this.today;
             this.renderCalender();
-            this.calender[this.today.getDate()+value].isActive=true;
-            this.dateValue=new Date(this.today.getFullYear(),this.today.getMonth(),this.today.getDate()+1+value).toLocaleDateString();
-            
+            this.selectDate(this.today.getDate()-1+value)
         }
     },
     computed: {
