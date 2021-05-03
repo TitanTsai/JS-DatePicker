@@ -71,9 +71,11 @@ export default {
         },
         instantDate(value){
             this.dateValue=new Date(this.today.getFullYear(),this.today.getMonth(),this.today.getDate()+value).toLocaleDateString();
-            
+            this.calender=[];
             this.selected.setMonth(this.today.getMonth());
-            this.selectDate(this.today.getDate()+value)
+            this.renderCalender();
+            this.calender[this.today.getDate()+value].isActive=true
+            
         }
     },
     computed: {
