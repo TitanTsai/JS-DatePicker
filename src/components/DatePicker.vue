@@ -41,8 +41,7 @@ export default {
         }
     },
     created(){
-        this.selected = this.today
-        this.renderCalender()
+        this.instantSelect(0)
     },
     methods:{
         renderCalender(){
