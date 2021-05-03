@@ -4,12 +4,14 @@
 
 #### Change Log
 
++ 修正在Safari發生的RangeError
+
 + 新增快速選取明、後天選項
 
 + 新增v-if顯示快速選取選項
 
 ```JavaScript
-  <DatePicker v-model:modelValue="dateValue" :instantSelect="true"/>
+  <DatePicker v-model:modelValue="dateValue" :instantSelector="true"/>
 ```
 
 #### WIP:
