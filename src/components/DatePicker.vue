@@ -52,7 +52,7 @@ export default {
 
             for(let space = 1;space<=firstDay; space++){
                 this.prevDays.push(null)
-            };
+            }
 
             for(let day = 1; day<=lastDay; day++){
                 this.calender.push({'num':day})
@@ -90,13 +90,12 @@ export default {
 
 <style>
     :root  {
-        --background:#ffffff;
-        --select:#F2F4F6;
-        --primary:#008FFD;
-        --white:#f2f2f2;
-        --caption:#19191B;
-        --disabled:#c2c2c2;
-        --hover:#F2F4F6;
+        --dp_background:#ffffff;
+        --dp_select:#F2F4F6;
+        --dp_primary:#008FFD;
+        --dp_white:#f2f2f2;
+        --dp_caption:#19191B;
+        --dp_hover:#F2F4F6;
         user-select:none;
         -webkit-user-select:none;
         -ms-user-select: none;
@@ -117,7 +116,7 @@ export default {
         margin:1em auto;
         display:block;
         width:20em;
-        background-color:var(--background);
+        background-color:var(--dp_background);
         border-radius: 0.5em;
         box-shadow: 0 3px 6px rgba(0,0,0,0.16);
         padding:1em;
@@ -133,15 +132,15 @@ export default {
     .dp-instant-btn{
         padding:2px 8px;
         font-weight: 500;
-        background-color:var(--select);
+        background-color:var(--dp_select);
         margin-right:8px;
         border-radius: 4px;
         cursor:pointer;
     }
 
     .dp-instant-btn:hover{
-        background-color:var(--primary);
-        color:var(--white)
+        background-color:var(--dp_primary);
+        color:var(--dp_white)
     }
 
     .dp-month-header{
@@ -151,7 +150,7 @@ export default {
     }
 
     .dp-month-display{
-        color:var(--caption);
+        color:var(--dp_caption);
         font-size:20px;
         font-weight: 500;
         
@@ -172,8 +171,8 @@ export default {
     }
 
     .dp-change-month:hover{
-        background-color:var(--primary);
-        color:var(--white);
+        background-color:var(--dp_primary);
+        color:var(--dp_white);
     }
 
     .dp-weeks-container{
@@ -191,23 +190,24 @@ export default {
         border-radius: 8px;
         justify-self: center;
         line-height: 36px;
+        color:var(--dp_caption);
     }
     
     .dp-day:hover{
-        background-color:var(--hover);
+        background-color:var(--dp_hover);
     }
 
     .today{
-        border:2px solid var(--primary);
+        border:2px solid var(--dp_primary);
     }
 
     .active{
-        background-color:var(--primary);
-        color:var(--white)
+        background-color:var(--dp_primary);
+        color:var(--dp_white)
     }
 
     .active:hover{
-        background-color:var(--primary);
+        background-color:var(--dp_primary);
     }
 
     .dp-footer{
@@ -217,12 +217,13 @@ export default {
     .dp-done_button{
         display:block;
         width:100%;
-        background-color:var(--primary);
-        color:var(--white);
+        background-color:var(--dp_primary);
+        color:var(--dp_white);
         font-size:18px;
         font-weight:500;
         border-radius:8px;
         padding:8px 0;
+        text-align: center;
         cursor: pointer;
     }
 
@@ -230,7 +231,7 @@ export default {
         .dp-input{
             width:240px;
             font-size:1em;
-            background: url('../assets/images/calender.svg') no-repeat 210px 10px var(--background);
+            background: url('../assets/images/calender.svg') no-repeat 210px 10px var(--dp_background);
         }
     }
 </style>
