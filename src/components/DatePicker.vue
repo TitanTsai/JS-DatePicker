@@ -1,7 +1,6 @@
 <template>
     <div>
         <input class="dp-input" type="text" v-model="dateValue" @click="showModal=!showModal;" placeholder="Due Date" readonly>
-        
         <div class="dp-container" v-if="showModal">
             <div class="dp-instant-container" v-if="instantSelect">
                 <div class="dp-instant-btn" @click="instantDate(-1)">Today</div>
@@ -91,6 +90,20 @@ export default {
 </script>
 
 <style>
+    :root  {
+        --background:#ffffff;
+        --select:#F2F4F6;
+        --primary:#008FFD;
+        --white:#f2f2f2;
+        --caption:#19191B;
+        --disabled:#c2c2c2;
+        --hover:#F2F4F6;
+        user-select:none;
+        -webkit-user-select:none;
+        -ms-user-select: none;
+        -moz-user-select: none;
+    }
+
     .dp-input{
         width:340px;
         font-size:1em;
@@ -124,6 +137,7 @@ export default {
         background-color:var(--select);
         margin-right:8px;
         border-radius: 4px;
+        cursor:pointer;
     }
 
     .dp-instant-btn:hover{

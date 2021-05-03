@@ -1,4 +1,5 @@
 <template>
+  Selected Date:
   <DatePicker v-model:modelValue="dateValue" :instantSelect="true"/>
 </template>
 
@@ -30,19 +31,7 @@ export default {
   margin-top: 60px;
 }
 
-:root  {
-    --background:#ffffff;
-    --select:#F2F4F6;
-    --primary:#008FFD;
-    --white:#f2f2f2;
-    --caption:#19191B;
-    --disabled:#c2c2c2;
-    --hover:#F2F4F6;
-    user-select:none;
-    -webkit-user-select:none;
-    -ms-user-select: none;
-    -moz-user-select: none;
-}
+
 
 
 </style>
