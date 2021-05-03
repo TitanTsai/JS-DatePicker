@@ -3,6 +3,12 @@
         <input class="dp-input" type="text" v-model="dateValue" @click="showModal=!showModal;" placeholder="Due Date" readonly>
         
         <div class="dp-container" v-if="showModal">
+            <div class="dp-instant-container" v-if="InstantSelect">
+                <div class="dp-instant-btn" @click="instantDate(-1)">Today</div>
+                <div class="dp-instant-btn" @click="instantDate(0)">Tomorrow</div>
+                <div class="dp-instant-btn" @click="instantDate(1)">+2 Days</div>
+            </div>
+
             <div class="dp-month-header">
                 <div class="dp-change-month" @click="changeMonth(-1)">&#10094;</div>
                 <div class="dp-month-display">{{this.monthName[this.selected.getMonth()]}}, {{this.selected.getFullYear()}}</div>
@@ -26,17 +32,19 @@ export default {
     emits: ['update:modelValue'],
     data(){
         return{
+            today: new Date(),
             selected: new Date(),
             weekName:['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
             monthName:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
             showModal:false,
+            InstantSelect:true,
             calender: [],
             prevWeekDays:[],
         }
     },
     created(){
         this.renderCalender(),
-        this.calender[this.selected.getDate()-1].isActive = true
+        this.calender[this.today.getDate()-1].isActive = true
     },
     methods:{
         renderCalender(){
@@ -60,6 +68,12 @@ export default {
             this.calender.forEach(item=> item.isActive=false)
             this.calender[value].isActive = true;
             this.dateValue =new Date(this.selected.setDate(value+1)).toLocaleDateString()
+        },
+        instantDate(value){
+            this.dateValue=new Date(this.today.getFullYear(),this.today.getMonth(),this.today.getDate()+value).toLocaleDateString();
+            
+            this.selected.setMonth(this.today.getMonth());
+            this.selectDate(this.today.getDate()+value)
         }
     },
     computed: {
@@ -103,6 +117,19 @@ export default {
     .dp-instant-container{
         display:flex;
         justify-content: flex-start;
+    }
+
+    .dp-instant-btn{
+        padding:2px 8px;
+        font-weight: 500;
+        background-color:var(--select);
+        margin-right:8px;
+        border-radius: 4px;
+    }
+
+    .dp-instant-btn:hover{
+        background-color:var(--primary);
+        color:var(--white)
     }
 
     .dp-month-header{
